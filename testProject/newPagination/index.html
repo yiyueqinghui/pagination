@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>分页插件</title>
+		<link rel="stylesheet" href="css/pagination.css" />
+	</head>
+	<style>
+		*{
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+		#container{
+			width: 900px;
+			margin: 0 auto;
+			/*border:1px solid gray;*/
+			padding-top:30px;
+			padding-bottom: 100px;
+		}
+		#container>h4{
+			margin-bottom: 20px;
+		}
+		#container ul li{
+			width: 100%;
+			overflow: hidden;
+			font-size: 17px;
+			color:gray;
+			background-image: url(img/right.jpg);
+			background-size: 15px 15px;
+			background-repeat: no-repeat;
+			background-position: left center;
+			padding-left: 20px;
+			padding:10px 0 10px 20px;
+			border-bottom: 1px dotted darkgray;
+			
+			
+		}
+		#container ul li .txt{
+			float: left;
+		}
+		#container ul li .time{
+			float: right;
+		}
+	</style>
+	<body>
+		<div id="container">
+			<h4 align="center">新闻列表</h4>
+			<ul id="list_dom">
+				
+			</ul>
+			<!--分页   html-->
+	        <div class="M-box"></div>
+			
+			
+		</div>
+	</body>
+	<script type="text/etpl" id="list_etpl">
+		<!-- for:${list} as ${item}-->
+			<li>
+				<p class="txt">${item.txt}</p>
+				<p class="time">${item.time}</p>
+			</li>
+		<!-- /for-->
+		
+	</script>
+	<script type="text/javascript" src="js/jquery-3.2.1.min.js" ></script>
+	<script type="text/javascript" src="js/etpl.js"></script>
+	<script type="text/javascript" src="js/mock.js" ></script>
+	<script type="text/javascript" src="js/interface.js">></script>
+	<!--分页 js-->
+	<script type="text/javascript" src="js/jquery.pagination.js"></script>
+
+
+	<script>
+		$(document).ready(function(){
+			//初次请求
+			ajaxData(1);
+			
+			//请求数据
+			function ajaxData(currentPage){
+				$.ajax({
+					url:"http://test.com/news",
+					type:"post",
+					data:{
+						"currentPage":currentPage
+					},
+					dataType:'json',
+					async:true,
+					success:function(data){
+						$("#list_dom").html();
+						var template = $("#list_etpl").html();
+						var render = etpl.compile(template);
+						var txt = render(data);
+						$("#list_dom").html(txt);
+						
+						//页面初始化
+						if(currentPage==1){
+							var total = data['total'];
+						    pageInit(total,currentPage);
+						}
+
+	
+					}
+				});
+			}
+			
+			//分页
+			function pageInit(total,currentPage){
+				//分页初始化
+				$('.M-box').pagination({
+					mode:'fixed',	   //固定显示的页码数量
+
+                    pageCount:total,      //总页数
+                    
+//						coping:true,       //coping必须设置为true,才能设置homePage,endPage
+//						homePage:'首页',
+//						endPage:'尾页',
+					current: currentPage,    //当前第几页
+					prevContent:'上一页',    //修改上一页，下一页的标签内容
+					nextContent:'下一页',
+					
+//						keepShowPN:true,       //是否一直显示上一页下一页
+					
+//						totalData:100,    //数据总数
+//						showData:5,       //当前页显示条数         从而自动计算出来总页数
+
+//                      jump:true,        //开启跳转到第几页
+					
+					
+					
+				    callback: function (api) {
+				    	//获取当前页数
+				    	var currentPage = api.getCurrent();
+				    	console.log(currentPage);
+				    	
+				    	//获取总页数
+				    	console.log(api.getPageCount());
+				    	
+                        //重新加载数据
+                        jumpPage(currentPage);
+				    	
+				    }
+				});
+			}
+
+            //分页回调
+            function jumpPage(currentPage){
+            	ajaxData(currentPage);
+            }
+			
+			
+		})
+		
+		
+		
+		
+		
+	</script>
+	
+</html>

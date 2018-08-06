@@ -1,0 +1,24 @@
+.M-box{
+	margin-top: 20px;
+	text-align: center;
+}
+.M-box a,
+.M-box span{
+	display: inline-block;
+	border: 1px solid gray;
+	margin: 0 5px;
+	text-decoration: none;
+	padding:2px 8px;
+	line-height: 20px;
+	text-align: center;
+	color: #000000;
+}
+.M-box .active{
+	color: red;
+}
+.M-box .jump-ipt{
+	width: 50px;
+	height: 26px;
+	position: relative;
+	top: -2px;
+}
